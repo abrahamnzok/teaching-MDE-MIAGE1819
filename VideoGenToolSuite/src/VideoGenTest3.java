@@ -100,8 +100,6 @@ public class VideoGenTest3 {
 			fileCSV.append("\n");
 		}
 		
-		System.out.println(fileCSV);
-		System.out.println(allSequences);
 	}
 
 }
