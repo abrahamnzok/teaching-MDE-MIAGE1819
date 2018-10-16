@@ -20,7 +20,7 @@ import org.xtext.example.mydsl.videoGen.VideoDescription;
 import org.xtext.example.mydsl.videoGen.VideoGeneratorModel;
 import org.xtext.example.mydsl.videoGen.VideoSeq;
 
-public class VideoGenTest2 {
+public class Tp2 {
 
 	@Test
 	public void VideGenTestffmpeg() throws FileNotFoundException, UnsupportedEncodingException {
@@ -40,18 +40,15 @@ public class VideoGenTest2 {
 				if (vseq instanceof MandatoryVideoSeq) {
 					String location = ((MandatoryVideoSeq) vseq).getDescription().getLocation();
 					mediaMKV.add(location);
-					//playlist += "file '" + location + "'" + "\n"; 
 				} else if (vseq instanceof OptionalVideoSeq) {
 					int nombreAleatoire = rand.nextInt(2);
 					if(nombreAleatoire == 1) {
 						String location = ((OptionalVideoSeq) vseq).getDescription().getLocation();
 						mediaMKV.add(location);
-						//playlist += "file '" + location + "'"+ "\n"; 
 					}
 				} else if (vseq instanceof AlternativeVideoSeq) {
 					EList<VideoDescription> videodesc= ((AlternativeVideoSeq) vseq).getVideodescs();
 					int nombreAleatoire = rand.nextInt(videodesc.size());
-					//playlist += "file '" + videodesc.get(nombreAleatoire).getLocation() + "'" + "\n";
 					mediaMKV.add(videodesc.get(nombreAleatoire).getLocation());
 				}
 			}
