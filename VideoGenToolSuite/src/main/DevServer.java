@@ -1,3 +1,4 @@
+package main;
 import static spark.Spark.*;
 
 public class DevServer {
