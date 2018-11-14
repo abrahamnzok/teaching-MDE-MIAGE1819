@@ -1,3 +1,5 @@
+package gen;
+
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.xtext.xbase.lib.InputOutput;
 import org.junit.Assert;

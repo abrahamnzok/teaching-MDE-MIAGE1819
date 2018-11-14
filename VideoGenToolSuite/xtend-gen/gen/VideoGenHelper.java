@@ -1,3 +1,5 @@
+package gen;
+
 import java.util.HashMap;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;

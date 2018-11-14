@@ -1,12 +1,13 @@
+package main;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.junit.Test;
+import gen.VideoGenHelper;
 import org.xtext.example.mydsl.videoGen.AlternativeVideoSeq;
 import org.xtext.example.mydsl.videoGen.Image;
 import org.xtext.example.mydsl.videoGen.MandatoryVideoSeq;
