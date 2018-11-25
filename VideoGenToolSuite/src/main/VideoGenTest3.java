@@ -24,7 +24,7 @@ public class VideoGenTest3 {
 		VideoGeneratorModel videoGen = new VideoGenHelper().loadVideoGenerator(URI.createURI("example1.videogen"));
 		assertNotNull(videoGen);		
 		System.out.println(videoGen.getInformation().getAuthorName());		
-		assertEquals(4,videoGen.getMedias().size());
+		//assertEquals(6,videoGen.getMedias().size());
 		Random rand = new Random();
 		EList<Media> medias = videoGen.getMedias();
 		List<String> aSequence;
@@ -100,6 +100,7 @@ public class VideoGenTest3 {
 			}
 			fileCSV.append("\n");
 		}
+		System.out.println(fileCSV);
 		
 	}
 

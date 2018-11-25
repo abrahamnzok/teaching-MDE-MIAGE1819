@@ -5,8 +5,14 @@ import org.eclipse.emf.common.util.URI;
 import org.xtext.example.mydsl.videoGen.Media;
 
 public class VideoGenGenerator {
-	
+	private String uri = "example1.videogen";
 	public EList<Media> getMedias(String uri){
-		return new VideoGenHelper().loadVideoGenerator(URI.createURI(uri)).getMedias();
+		if(uri.isEmpty()) {
+			this.uri = uri;
+		}
+		return new VideoGenHelper().loadVideoGenerator(URI.createURI(this.uri)).getMedias();
+	}
+	public EList<Media> getMedias(){
+		return new VideoGenHelper().loadVideoGenerator(URI.createURI(this.uri)).getMedias();
 	}
 }
