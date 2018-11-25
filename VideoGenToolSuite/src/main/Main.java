@@ -7,7 +7,14 @@ import java.util.Random;
 public class Main {
 
   public static void main(String[] args) {
-	    System.out.println(new Random().nextInt(3));
+	  port(8080);
+	  
+	  get("/variant/duration", (req, res) -> {
+		  return new DevServer().getVariantDuration(req, res);
+	  });
+	  get("/variant/possibilities/data", (req, res) -> {
+		  return new DevServer().getPossibleVariansAndSize(req, res);
+	  });
   }
 
 }
