@@ -23,7 +23,7 @@ import com.google.gson.Gson;
 
 public class Analysis {
 
-  private String basePath = "Users/Abraham/Desktop/Pexels/";
+  private String basePath = "/Users/Abraham/Desktop/Pexels/";
   private String filePath = "/Users/Abraham/Desktop/Pexels/variante.mkv";
   private String command = "/usr/local/bin/ffprobe -v quiet -of csv=p=0 -show_entries format=duration ";
   private String duration = "";
@@ -61,6 +61,7 @@ public class Analysis {
 		  allMedias.forEach(element -> 
 			  data.put(element, String.valueOf(variant.contains(element)))
 		  );
+		  data.put("size", this.utils.getVariantSize(this.basePath,variant));
 		  metadata.add(data);
 	  }
 	  return new Gson().toJson(metadata);
