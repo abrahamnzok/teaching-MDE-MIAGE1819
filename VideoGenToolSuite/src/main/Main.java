@@ -7,17 +7,27 @@ import java.util.Random;
 public class Main {
 
   public static void main(String[] args) {
-	  port(8080);
-	  
-	  get("/autogenerate", (req, res) -> {
-		  return new DevServer().getAutoGenerate(req, res);
-	  });
-	  get("/variant/duration", (req, res) -> {
-		  return new DevServer().getVariantDuration(req, res);
-	  });
-	  get("/variant/possibilities/data", (req, res) -> {
-		  return new DevServer().getPossibleVariansAndSize(req, res);
-	  });
+    port(8080);
+
+    DevServer server = new DevServer();
+
+    path("/compile/", () -> {
+      get("autogenerate/", (req, res) -> {
+        return server.getAutoGenerate(req, res);
+      });
+      get("gif/", (req, res) -> {
+        return server.getGif(req, res);
+      });
+    });
+
+    path("/variant/", () -> {
+      get("/variant/duration", (req, res) -> {
+        return server.getVariantDuration(req, res);
+      });
+      get("/variant/possibilities/data", (req, res) -> {
+        return server.getPossibleVariansAndSize(req, res);
+      });
+    });
   }
 
 }
