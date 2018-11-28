@@ -13,7 +13,7 @@ public class Main {
 
     path("/compile/", () -> {
       get("autogenerate/", (req, res) -> {
-        return server.getAutoGenerate(req, res);
+        return server.generate(req, res);
       });
       get("gif/", (req, res) -> {
         return server.getGif(req, res);

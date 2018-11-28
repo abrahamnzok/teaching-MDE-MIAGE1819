@@ -16,6 +16,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.eclipse.emf.common.util.EList;
 import org.xtext.example.mydsl.videoGen.Media;
 
+import com.google.gson.Gson;
+
 import spark.Request;
 import spark.Response;
 
@@ -32,15 +34,18 @@ public class DevServer {
   private String resMediaType = "video/mkv";
   private String resPngType = "image/png";
 
-  public Integer getAutoGenerate(Request req, Response res)
+  public Integer generate(Request req, Response res)
       throws IOException, InterruptedException {
     this.ffmpeg = new FfmpegEngine();
-    List<String> playlist = this.ffmpeg.playListFiles(medias);
+    boolean autogenerate = Boolean.parseBoolean(req.queryParams("autogen"));
+    String userPlaylist = req.body();
+    List<String> playlist =
+        autogenerate ? this.ffmpeg.playListFiles(medias) : this.ffmpeg.playListFiles(userPlaylist);
+    System.out.println(playlist);    
     String playlistFile = this.ffmpeg.createFfmpegPlaylist(playlist);
     this.ffmpeg.writeToFile(playlistFile);
-    boolean doGenerate = Boolean.parseBoolean(req.queryParams("activate"));
     String filename = req.queryParams("filename");
-    this.ffmpeg.generateVideo(doGenerate, filename);
+    this.ffmpeg.generateVideo(filename);
     Path file = Paths.get(this.ffmpeg.getOutputLocation());
     byte[] video = Files.readAllBytes(file);
     res.status(200);
