@@ -20,6 +20,10 @@ import java.util.Set;
 import org.eclipse.emf.common.util.EList;
 import org.xtext.example.mydsl.videoGen.Media;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 public class FfmpegEngine {
 
   private List<String> playlist = new ArrayList<>();
@@ -40,6 +44,11 @@ public class FfmpegEngine {
     return this.playlist;
   }
 
+  public List<String> playListFiles(String userPlaylist) {
+    return new Gson().fromJson(userPlaylist, List.class);
+
+  }
+
   public String createFfmpegPlaylist(List<String> playlist) {
     playlist.forEach(element -> this.ffmpegFile += "file '" + element + "' \n");
     return this.ffmpegFile;
@@ -53,14 +62,11 @@ public class FfmpegEngine {
         StandardOpenOption.TRUNCATE_EXISTING);
   }
 
-  public void generateVideo(boolean doGenerate, String filename) throws InterruptedException {
-    if (doGenerate) {
-      this.compilationLocation += filename + ".mkv";
-      System.out.println(this.compilationLocation);
-      this.execute(
-          "/usr/local/bin/ffmpeg -y -f concat -safe 0 -i " + this.playlistPath + " -c copy "
-              + this.compilationLocation);
-    }
+  public void generateVideo(String filename) throws InterruptedException {
+    this.compilationLocation += filename + ".mkv";
+    this.execute(
+        "/usr/local/bin/ffmpeg -y -f concat -safe 0 -i " + this.playlistPath + " -c copy "
+            + this.compilationLocation);
   }
 
   public boolean generateGif(String name) throws InterruptedException {
@@ -71,9 +77,9 @@ public class FfmpegEngine {
     Path path = Paths.get(this.compilationLocation);
     if (Files.exists(path) && ! Files.isDirectory(path)) {
       String cmdPalette = "/usr/local/bin/ffmpeg -t 3 -ss 2.6 -y -i " + this.compilationLocation
-          + " -vf fps=15,scale=400:-1:flags=lanczos,palettegen " + palette;
-      String gifCmd = "/usr/local/bin/ffmpeg -y -i " + this.compilationLocation + " -i " + palette
-          + "\" -filter_complex \"fps=10,scale=480:-1:flags=lanczos[x];[x][1:v]paletteuse\" \""
+          + " -vf fps=15,scale=480:-1:flags=lanczos,palettegen " + palette;
+      String gifCmd = "/usr/local/bin/ffmpeg -y -i " + this.compilationLocation + "\" -i \"" + palette
+          + "\" -filter_complex \"fps=15,scale=480:-1:flags=lanczos[x];[x][1:v]paletteuse\" \""
           + gif;
       this.execute(cmdPalette);
       this.execute(gifCmd);
