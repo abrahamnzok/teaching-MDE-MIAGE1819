@@ -20,70 +20,146 @@ import org.xtext.example.mydsl.videoGen.VideoSeq;
 
 public class VideoSeqUtils {
 
+	/**
+	 * 
+	 * @param vseq
+	 * @return
+	 */
   public boolean isMandatory(VideoSeq vseq) {
     return vseq instanceof MandatoryVideoSeq;
   }
 
+  /**
+   * 
+   * @param vseq
+   * @return
+   */
   public boolean isAlternative(VideoSeq vseq) {
     return vseq instanceof AlternativeVideoSeq;
   }
 
+  /**
+   * 
+   * @param vseq
+   * @return
+   */
   public boolean isOptional(VideoSeq vseq) {
     return vseq instanceof OptionalVideoSeq;
   }
 
+  /**
+   * 
+   * @param media
+   * @return
+   */
   public boolean isVideoSeq(Media media) {
     return media instanceof Image ? false : true;
   }
 
+  /**
+   * 
+   * @param media
+   * @return
+   */
   public VideoSeq renderVseq(Media media) {
     return isVideoSeq(media) ? (VideoSeq) media : (VideoSeq) null;
   }
 
+  /**
+   * 
+   * @param vseq
+   * @return
+   */
   public String getMandatoryLocation(VideoSeq vseq) {
     return ((MandatoryVideoSeq) vseq).getDescription().getLocation();
   }
 
+  /**
+   * 
+   * @param vseq
+   * @return
+   */
   public String getMandatoryId(VideoSeq vseq) {
     return ((MandatoryVideoSeq) vseq).getDescription().getVideoid();
   }
 
+  /**
+   * 
+   * @param vseq
+   * @return
+   */
   public String getOptionalId(VideoSeq vseq) {
     return ((OptionalVideoSeq) vseq).getDescription().getVideoid();
   }
 
+  /**
+   * 
+   * @param vseq
+   * @return
+   */
   public String getRandomOptionalId(VideoSeq vseq) {
     return new Random().nextInt(2) == 1 ? ((OptionalVideoSeq) vseq).getDescription().getVideoid()
         : "";
   }
 
+  /**
+   * 
+   * @param vseq
+   * @param index
+   * @return
+   */
   public String getAlternativeId(VideoSeq vseq, int index) {
     EList<VideoDescription> videodesc = ((AlternativeVideoSeq) vseq).getVideodescs();
     return videodesc.get(index).getVideoid();
   }
 
+  /**
+   * 
+   * @param vseq
+   * @return
+   */
   public String getRandomAlternativeId(VideoSeq vseq) {
     EList<VideoDescription> videodesc = ((AlternativeVideoSeq) vseq).getVideodescs();
     int random = new Random().nextInt(videodesc.size());
     return videodesc.get(random).getVideoid();
   }
 
+  /**
+   * 
+   * @param vseq
+   * @return
+   */
   public int getAlternativeSize(VideoSeq vseq) {
     EList<VideoDescription> videodesc = ((AlternativeVideoSeq) vseq).getVideodescs();
     return videodesc.size();
   }
 
+  /**
+   * 
+   * @param vseq
+   * @return
+   */
   public String getOptionalLocation(VideoSeq vseq) {
     return new Random().nextInt(2) == 1 ? ((OptionalVideoSeq) vseq).getDescription().getLocation()
         : "";
   }
 
+  /**
+   * 
+   * @param vseq
+   * @return
+   */
   public String getAlternativeLocation(VideoSeq vseq) {
     EList<VideoDescription> videodesc = ((AlternativeVideoSeq) vseq).getVideodescs();
     int random = new Random().nextInt(videodesc.size());
     return videodesc.get(random).getLocation();
   }
 
+  /**
+   * 
+   * @param vseq
+   * @return
+   */
   public String getLocationOfVseq(VideoSeq vseq) {
     if (isAlternative(vseq)) {
       return this.getAlternativeLocation(vseq);
@@ -94,6 +170,11 @@ public class VideoSeqUtils {
     }
   }
 
+  /**
+   * 
+   * @param vseq
+   * @return
+   */
   public String getIdOfVseq(VideoSeq vseq) {
     if (isAlternative(vseq)) {
       return this.getRandomAlternativeId(vseq);
@@ -105,6 +186,11 @@ public class VideoSeqUtils {
   }
 
 
+  /**
+   * 
+   * @param medias
+   * @return
+   */
   public List<String> getMediaIds(EList<Media> medias) {
     List<String> mediaIds = new ArrayList<>();
     for (Media media : medias) {
@@ -125,6 +211,12 @@ public class VideoSeqUtils {
     return mediaIds;
   }
 
+  /**
+   * 
+   * @param basePath
+   * @param variants
+   * @return
+   */
   public String getVariantSize(String basePath, List<String> variants) {
     long fileSize = 0;
     for (String varianteId : variants) {
