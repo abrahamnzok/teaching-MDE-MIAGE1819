@@ -9,7 +9,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.ParseException;
+import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -26,7 +30,7 @@ public class DevServer {
   private VideoSeqUtils utils = new VideoSeqUtils();
   private EList<Media> medias = new VideoGenGenerator().getMedias("example1.videogen");
   private FfmpegEngine ffmpeg;
-  private Analysis analysis = new Analysis();
+  private Analysis analysis;
 
   private String port = "8080";
   private String resDataType = "application/json";
@@ -34,11 +38,44 @@ public class DevServer {
   private String resMediaType = "video/mkv";
   private String resPngType = "image/png";
 
+  /**
+   * 
+   * @param req
+   * @param res
+   * @return
+   * @throws InterruptedException
+   * @throws IOException
+   */
+  public String getMedias(Request req, Response res) throws InterruptedException, IOException{
+	  res.type(this.resDataType);
+	  this.ffmpeg = new FfmpegEngine();
+	  List<String> allMedias = this.ffmpeg.allMedias(medias);
+	  Map<String, String> data = new HashMap<>();
+	  int i = 0;
+	  for(String element : allMedias) {
+		  String vignette = this.ffmpeg.generateVignette(element, "v"+ i);
+		  i++;
+		  Path path = Paths.get(vignette);
+		  String imgBase64 = Base64.getEncoder().encodeToString(Files.readAllBytes(path));
+		  data.put(element, this.ffmpeg.generateVignette(element, imgBase64)); 
+	  }
+	  
+	return new Gson().toJson(data);
+  }
+  
+  /**
+   * 
+   * @param req
+   * @param res
+   * @return
+   * @throws IOException
+   * @throws InterruptedException
+   */
   public Integer generate(Request req, Response res)
       throws IOException, InterruptedException {
-    this.ffmpeg = new FfmpegEngine();
     boolean autogenerate = Boolean.parseBoolean(req.queryParams("autogen"));
     String userPlaylist = req.body();
+	this.ffmpeg = new FfmpegEngine();
     List<String> playlist =
         autogenerate ? this.ffmpeg.playListFiles(medias) : this.ffmpeg.playListFiles(userPlaylist);
     System.out.println(playlist);    
@@ -56,6 +93,15 @@ public class DevServer {
     return 200;
   }
 
+  
+  /**
+   * 
+   * @param req
+   * @param res
+   * @return
+   * @throws InterruptedException
+   * @throws IOException
+   */
   public Integer getGif(Request req, Response res) throws InterruptedException, IOException {
     res.type(this.resImageType);
     String gifName = req.queryParams("gifname");
@@ -74,14 +120,30 @@ public class DevServer {
     }
   }
 
+  /**
+   * 
+   * @param req
+   * @param res
+   * @return
+   * @throws IOException
+   * @throws ParseException
+   */
   public String getVariantDuration(Request req, Response res) throws IOException, ParseException {
+	  this.analysis = new Analysis();
     res.type(this.resDataType);
-    return this.analysis.getDuration();
+    return new Gson().toJson(this.analysis.getDuration(this.ffmpeg.getOutputLocation()));
 
   }
 
+  /**
+   * 
+   * @param req
+   * @param res
+   * @return
+   */
   public String getPossibleVariansAndSize(Request req, Response res) {
+	  this.analysis = new Analysis();
     res.type(this.resDataType);
-    return this.analysis.getVariantsSize(medias, utils.getMediaIds(medias));
+    return this.analysis.getVariantsSize(this.medias, this.utils.getMediaIds(medias));
   }
 }

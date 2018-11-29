@@ -1,28 +1,18 @@
 package main;
 
-import java.awt.Image;
-import java.io.FileNotFoundException;
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.text.NumberFormat;
-import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Scanner;
-import java.util.Set;
-
 import org.eclipse.emf.common.util.EList;
 import org.xtext.example.mydsl.videoGen.Media;
-
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 public class FfmpegEngine {
 
@@ -31,11 +21,28 @@ public class FfmpegEngine {
   private String playlistPath = "/Users/Abraham/Desktop/Pexels/playlist.txt";
   private String outputBasePath = "/Users/Abraham/Desktop/Pexels/";
   private String compilationLocation = this.outputBasePath;
+  private String basePath = "/Users/Abraham/Desktop/Pexels/";
   private VideoSeqUtils utils = new VideoSeqUtils();
-  private String gifLocation = this.outputBasePath;
-  private String paletteLocation = this.outputBasePath;
+  private String gifLocation = "/Users/Abraham/Desktop/Pexels/";
+  private String paletteLocation = "/Users/Abraham/Desktop/Pexels/";
+  private String vignetteLocation = "/Users/Abraham/Desktop/Pexels/";
 
+  /**
+   * 
+   * @param medias
+   * @return
+   */
+  public List<String> allMedias(EList<Media> medias) {
+	  List<String> allMedias = new ArrayList<>();
+	  this.utils.getMediaIds(medias).forEach(media -> allMedias.add(this.basePath + media + ".mkv"));;
+	  return allMedias;
+  }
 
+  /**
+   * 
+   * @param medias
+   * @return
+   */
   public List<String> playListFiles(EList<Media> medias) {
     medias.forEach(media -> {
       this.playlist.add(this.utils.getLocationOfVseq(this.utils.renderVseq(media)));
@@ -44,16 +51,30 @@ public class FfmpegEngine {
     return this.playlist;
   }
 
+  /**
+   * 
+   * @param userPlaylist
+   * @return
+   */
   public List<String> playListFiles(String userPlaylist) {
     return new Gson().fromJson(userPlaylist, List.class);
-
   }
 
+  /**
+   * 
+   * @param playlist
+   * @return
+   */
   public String createFfmpegPlaylist(List<String> playlist) {
     playlist.forEach(element -> this.ffmpegFile += "file '" + element + "' \n");
     return this.ffmpegFile;
   }
 
+  /**
+   * 
+   * @param playlist
+   * @throws IOException
+   */
   public void writeToFile(String playlist)
       throws IOException {
     Path path = Paths.get(this.playlistPath);
@@ -62,13 +83,25 @@ public class FfmpegEngine {
         StandardOpenOption.TRUNCATE_EXISTING);
   }
 
+  /**
+   * 
+   * @param filename
+   * @throws InterruptedException
+   */
   public void generateVideo(String filename) throws InterruptedException {
-    this.compilationLocation += filename + ".mkv";
+	String location = this.basePath + filename + ".mkv";
+    this.compilationLocation = location;
     this.execute(
         "/usr/local/bin/ffmpeg -y -f concat -safe 0 -i " + this.playlistPath + " -c copy "
             + this.compilationLocation);
   }
 
+  /**
+   * 
+   * @param name
+   * @return
+   * @throws InterruptedException
+   */
   public boolean generateGif(String name) throws InterruptedException {
     String palette = this.paletteLocation + "palette.png";
     String gifName = name.isEmpty() ? "output.gif" : name;
@@ -77,28 +110,56 @@ public class FfmpegEngine {
     Path path = Paths.get(this.compilationLocation);
     if (Files.exists(path) && ! Files.isDirectory(path)) {
       String cmdPalette = "/usr/local/bin/ffmpeg -t 3 -ss 2.6 -y -i " + this.compilationLocation
-          + " -vf fps=15,scale=480:-1:flags=lanczos,palettegen " + palette;
-      String gifCmd = "/usr/local/bin/ffmpeg -y -i " + this.compilationLocation + "\" -i \"" + palette
-          + "\" -filter_complex \"fps=15,scale=480:-1:flags=lanczos[x];[x][1:v]paletteuse\" \""
-          + gif;
+          + " -vf fps=15,scale=400:-1:flags=lanczos,palettegen " + palette;
+      String gifCmd = "/usr/local/bin/ffmpeg -y -i " + this.compilationLocation + " -i " + palette
+          + " -filter_complex fps=15,scale=400:-1:flags=lanczos[x];[x][1:v]paletteuse " + gif;
       this.execute(cmdPalette);
       this.execute(gifCmd);
+      this.gifLocation = this.basePath;
       return true;
     } else {
       return false;
 
     }
   }
-
+  
+  /**
+   * 
+   * @param input
+   * @param output
+   * @return
+   * @throws InterruptedException
+   */
+  public String generateVignette(String input, String output) throws InterruptedException {
+	  String command = "/usr/local/bin/ffmpeg -y -i " + input + " -vf scale=300x200 -r 1 -t 00:00:01 -ss 00:00:02  -f image2 "
+	            + this.vignetteLocation + output + ".jpg";
+	  this.execute(command);
+	  System.out.println(command);
+	  return this.vignetteLocation + output + ".jpg";
+  }
+  
+  /**
+   * 
+   * @return
+   */
   public String getGifLocation() {
     return this.gifLocation;
   }
 
+  /**
+   * 
+   * @return
+   */
   public String getOutputLocation() {
     return this.compilationLocation;
   }
 
 
+  /**
+   * 
+   * @param medias
+   * @return
+   */
   public List<String> generateVariant(EList<Media> medias) {
     List<String> variant = new ArrayList<>();
     medias.forEach(media -> {
@@ -108,20 +169,39 @@ public class FfmpegEngine {
 
     return variant;
   }
-
+  
+  /**
+   * 
+   * @return
+   */
   public String getOutputPath() {
     return this.outputBasePath;
   }
 
+  /**
+   * 
+   * @param command
+   * @throws InterruptedException
+   */
   public void execute(String command) throws InterruptedException {
-    try {
-      Process p = Runtime.getRuntime().exec(command);
-      int exitcode = p.waitFor();
-
-    } catch (IOException e) {
-      e.printStackTrace();
-
-    }
+	  //System.out.println(command);
+		try
+      {
+          Runtime rt = Runtime.getRuntime();
+          Process proc = rt.exec(command);
+          InputStream stderr = proc.getErrorStream();
+          InputStreamReader isr = new InputStreamReader(stderr);
+          BufferedReader br = new BufferedReader(isr);
+          String line = null;
+          while ( (line = br.readLine()) != null)
+              System.out.println(line);
+          int exitVal = proc.waitFor();
+          System.out.println("Process exitValue: " + exitVal);
+      } catch (Throwable t)
+        {
+          t.printStackTrace();
+        }
   }
+
 
 }
