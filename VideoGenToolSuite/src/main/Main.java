@@ -2,8 +2,6 @@ package main;
 
 import static spark.Spark.*;
 
-import java.util.Random;
-
 public class Main {
 
   public static void main(String[] args) {
@@ -11,6 +9,11 @@ public class Main {
 
     DevServer server = new DevServer();
 
+    path("/allmedias/", () -> {
+      get("", (req, res) -> {
+        return server.getMedias(req, res);
+      });
+    });
     path("/compile/", () -> {
       get("autogenerate/", (req, res) -> {
         return server.generate(req, res);
@@ -21,10 +24,10 @@ public class Main {
     });
 
     path("/variant/", () -> {
-      get("/variant/duration", (req, res) -> {
+      get("duration/", (req, res) -> {
         return server.getVariantDuration(req, res);
       });
-      get("/variant/possibilities/data", (req, res) -> {
+      get("possibilities/data/", (req, res) -> {
         return server.getPossibleVariansAndSize(req, res);
       });
     });
