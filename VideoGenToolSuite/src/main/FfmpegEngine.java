@@ -9,9 +9,17 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.eclipse.emf.common.util.EList;
+import org.xtext.example.mydsl.videoGen.AlternativeVideoSeq;
 import org.xtext.example.mydsl.videoGen.Media;
+import org.xtext.example.mydsl.videoGen.VideoDescription;
+import org.xtext.example.mydsl.videoGen.VideoSeq;
+
 import com.google.gson.Gson;
 
 public class FfmpegEngine {
@@ -31,15 +39,59 @@ public class FfmpegEngine {
    * 
    * @param medias
    * @return
+   * @throws IOException
+   * @throws InterruptedException
    */
-  public List<String> allMedias(EList<Media> medias) {
-	  List<String> allMedias = new ArrayList<>();
-	  this.utils.getMediaIds(medias).forEach(media -> allMedias.add(this.basePath + media + ".mkv"));;
-	  return allMedias;
+  public List<Map<String, String>> mediaInformation(EList<Media> medias)
+      throws IOException, InterruptedException {
+    List<Map<String, String>> mediaSetInformation = new ArrayList<>();
+    Map<String, String> information;
+    Path path;
+    String imgBase64;
+    String vignette;
+    for (Media media : medias) {
+      VideoSeq vseq = this.utils.renderVseq(media);
+      if (this.utils.isMandatory(vseq)) {
+        information = new HashMap<String, String>();
+        vignette = this.generateVignette(this.utils.getMandatoryLocation(vseq),
+            this.utils.getMandatoryId(vseq));
+        path = Paths.get(vignette);
+        imgBase64 = Base64.getEncoder().encodeToString(Files.readAllBytes(path));
+        information.put("type", "mandatory");
+        information.put("location", this.utils.getMandatoryLocation(vseq));
+        information.put("image", imgBase64);
+        mediaSetInformation.add(information);
+      } else if (this.utils.isOptional(vseq)) {
+        information = new HashMap<String, String>();
+        vignette = this
+            .generateVignette(this.utils.getEachOptionalLocation(vseq), this.utils.getOptionalId(vseq));
+        path = Paths.get(vignette);
+        imgBase64 = Base64.getEncoder().encodeToString(Files.readAllBytes(path));
+        information.put("type", "optional");
+        information.put("location", this.utils.getEachOptionalLocation(vseq));
+        information.put("image", imgBase64);
+        mediaSetInformation.add(information);
+      } else {
+    	  information = new HashMap<>();
+          for (int index = 0; index < this.utils.getAlternativeSize(vseq); index++) {
+        	  String alternativeId = this.utils.getAlternativeId(vseq, index);
+        	  String alternativeLocation = this.utils.getAlternativeLocation(vseq, index);
+              vignette = this.generateVignette(alternativeLocation, alternativeId);
+              System.out.println(vignette);
+              path = Paths.get(vignette);
+              imgBase64 = Base64.getEncoder().encodeToString(Files.readAllBytes(path));
+              information.put("type", "alternative");
+              information.put("location", alternativeLocation);
+              information.put("image", imgBase64);
+              mediaSetInformation.add(information);
+          }
+        }
+    }
+    return mediaSetInformation;
   }
 
   /**
-   * 
+   *
    * @param medias
    * @return
    */
@@ -52,7 +104,7 @@ public class FfmpegEngine {
   }
 
   /**
-   * 
+   *
    * @param userPlaylist
    * @return
    */
@@ -61,7 +113,7 @@ public class FfmpegEngine {
   }
 
   /**
-   * 
+   *
    * @param playlist
    * @return
    */
@@ -71,7 +123,7 @@ public class FfmpegEngine {
   }
 
   /**
-   * 
+   *
    * @param playlist
    * @throws IOException
    */
@@ -84,12 +136,12 @@ public class FfmpegEngine {
   }
 
   /**
-   * 
+   *
    * @param filename
    * @throws InterruptedException
    */
   public void generateVideo(String filename) throws InterruptedException {
-	String location = this.basePath + filename + ".mkv";
+    String location = this.basePath + filename + ".mkv";
     this.compilationLocation = location;
     this.execute(
         "/usr/local/bin/ffmpeg -y -f concat -safe 0 -i " + this.playlistPath + " -c copy "
@@ -97,7 +149,7 @@ public class FfmpegEngine {
   }
 
   /**
-   * 
+   *
    * @param name
    * @return
    * @throws InterruptedException
@@ -109,7 +161,7 @@ public class FfmpegEngine {
     this.gifLocation = gif;
     Path path = Paths.get(this.compilationLocation);
     if (Files.exists(path) && ! Files.isDirectory(path)) {
-      String cmdPalette = "/usr/local/bin/ffmpeg -t 3 -ss 2.6 -y -i " + this.compilationLocation
+      String cmdPalette = "/usr/local/bin/ffmpeg -y -t 3 -ss 2.6 -i " + this.compilationLocation
           + " -vf fps=15,scale=400:-1:flags=lanczos,palettegen " + palette;
       String gifCmd = "/usr/local/bin/ffmpeg -y -i " + this.compilationLocation + " -i " + palette
           + " -filter_complex fps=15,scale=400:-1:flags=lanczos[x];[x][1:v]paletteuse " + gif;
@@ -122,24 +174,25 @@ public class FfmpegEngine {
 
     }
   }
-  
+
   /**
-   * 
+   *
    * @param input
    * @param output
    * @return
    * @throws InterruptedException
    */
   public String generateVignette(String input, String output) throws InterruptedException {
-	  String command = "/usr/local/bin/ffmpeg -y -i " + input + " -vf scale=300x200 -r 1 -t 00:00:01 -ss 00:00:02  -f image2 "
-	            + this.vignetteLocation + output + ".jpg";
-	  this.execute(command);
-	  System.out.println(command);
-	  return this.vignetteLocation + output + ".jpg";
+    String command = "/usr/local/bin/ffmpeg -y -i " + input
+        + " -vf scale=300x200 -r 1 -t 00:00:01 -ss 00:00:02  -f image2 "
+        + this.vignetteLocation + output + ".jpg";
+    this.execute(command);
+    System.out.println(command);
+    return this.vignetteLocation + output + ".jpg";
   }
-  
+
   /**
-   * 
+   *
    * @return
    */
   public String getGifLocation() {
@@ -147,7 +200,7 @@ public class FfmpegEngine {
   }
 
   /**
-   * 
+   *
    * @return
    */
   public String getOutputLocation() {
@@ -156,7 +209,7 @@ public class FfmpegEngine {
 
 
   /**
-   * 
+   *
    * @param medias
    * @return
    */
@@ -169,9 +222,9 @@ public class FfmpegEngine {
 
     return variant;
   }
-  
+
   /**
-   * 
+   *
    * @return
    */
   public String getOutputPath() {
@@ -179,28 +232,19 @@ public class FfmpegEngine {
   }
 
   /**
-   * 
+   *
    * @param command
    * @throws InterruptedException
    */
   public void execute(String command) throws InterruptedException {
-	  //System.out.println(command);
-		try
-      {
-          Runtime rt = Runtime.getRuntime();
-          Process proc = rt.exec(command);
-          InputStream stderr = proc.getErrorStream();
-          InputStreamReader isr = new InputStreamReader(stderr);
-          BufferedReader br = new BufferedReader(isr);
-          String line = null;
-          while ( (line = br.readLine()) != null)
-              System.out.println(line);
-          int exitVal = proc.waitFor();
-          System.out.println("Process exitValue: " + exitVal);
-      } catch (Throwable t)
-        {
-          t.printStackTrace();
-        }
+    //System.out.println(command);
+    try {
+      Process proc = Runtime.getRuntime().exec(command);
+      int exitValue = proc.waitFor();
+      System.out.println("exit value: " + exitValue);
+    } catch (Throwable t) {
+      t.printStackTrace();
+    }
   }
 
 
