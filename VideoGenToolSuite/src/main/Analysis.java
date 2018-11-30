@@ -19,7 +19,6 @@ import org.xtext.example.mydsl.videoGen.Media;
 import com.google.gson.Gson;
 
 
-
 public class Analysis {
 
   private String basePath = "/Users/Abraham/Desktop/Pexels/";
@@ -29,7 +28,7 @@ public class Analysis {
   private FfmpegEngine engine = new FfmpegEngine();
 
   /**
-   * 
+   *
    * @param uri
    * @return
    * @throws IOException
@@ -53,26 +52,38 @@ public class Analysis {
     }
     return fileExists ? LocalTime.MIN.plusSeconds(durationLong).toString() : "0h:00min:00sec";
   }
-  
+
   /**
-   * 
+   *
    * @param medias
    * @param allMedias
    * @return
    */
   public String getVariantsSize(EList<Media> medias, List<String> allMedias) {
-	  List<Map> metadata = new ArrayList<>();
-	  int u = 0;
-	  for(int i = 0; i < medias.size(); i++) {
-		  List<String> variant = this.engine.generateVariant(medias);
-		  Map<String, String> data =  new HashMap<String, String>();
-		  data.put("id", String.valueOf(i));
-		  allMedias.forEach(element -> 
-			  data.put(element, String.valueOf(variant.contains(element)))
-		  );
-		  data.put("size", this.utils.getVariantSize(this.basePath,variant));
-		  metadata.add(data);
-	  }
-	  return new Gson().toJson(metadata);
+    List<Map> metadata = new ArrayList<>();
+    List<String> variant = new ArrayList<>();
+    List<List<String>> collector = new ArrayList<>();
+    List<String> tempclone;
+    int nbOfVariants = this.utils
+        .nbOfVariant(this.utils.getAlternativeSize(medias), this.utils.getOptionalSize(medias));
+    int u = 0;
+    for (int i = 0; i < nbOfVariants; i++) {
+      collector.add(variant);
+      variant = this.engine.generateVariant(medias);
+      boolean collectorSaysTrue = collector.contains(variant);
+      while (collectorSaysTrue) {
+        variant = this.engine.generateVariant(medias);
+        collectorSaysTrue = collector.contains(variant);
+      }
+      Map<String, String> data = new HashMap<String, String>();
+      data.put("id", String.valueOf(i));
+      for (String element : allMedias) {
+        data.put(element, String.valueOf(variant.contains(element)));
+      }
+      data.put("size", this.utils.getVariantSize(this.basePath, variant));
+      metadata.add(data);
+    }
+    return new Gson().toJson(metadata);
   }
+
 }
