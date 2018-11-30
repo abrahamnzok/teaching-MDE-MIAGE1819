@@ -98,7 +98,7 @@ public class VideoSeqUtils {
    * @return
    */
   public String getRandomOptionalId(VideoSeq vseq) {
-    return new Random().nextInt(2) == 1 ? ((OptionalVideoSeq) vseq).getDescription().getVideoid()
+    return new Random().nextBoolean() ? ((OptionalVideoSeq) vseq).getDescription().getVideoid()
         : "";
   }
 
@@ -140,8 +140,22 @@ public class VideoSeqUtils {
    * @return
    */
   public String getOptionalLocation(VideoSeq vseq) {
-    return new Random().nextInt(2) == 1 ? ((OptionalVideoSeq) vseq).getDescription().getLocation()
+    return new Random().nextBoolean() ? ((OptionalVideoSeq) vseq).getDescription().getLocation()
         : "";
+  }
+  
+  /**
+   * 
+   * @param vseq
+   * @return
+   */
+  public String getEachOptionalLocation(VideoSeq vseq) {
+	    return  ((OptionalVideoSeq) vseq).getDescription().getLocation();
+  }
+  
+  public String getAlternativeLocation(VideoSeq vseq, int index) {
+	  EList<VideoDescription> videodesc = ((AlternativeVideoSeq) vseq).getVideodescs();
+	  return videodesc.get(index).getLocation();
   }
 
   /**
@@ -149,7 +163,7 @@ public class VideoSeqUtils {
    * @param vseq
    * @return
    */
-  public String getAlternativeLocation(VideoSeq vseq) {
+  public String getRandomAlternativeLocation(VideoSeq vseq) {
     EList<VideoDescription> videodesc = ((AlternativeVideoSeq) vseq).getVideodescs();
     int random = new Random().nextInt(videodesc.size());
     return videodesc.get(random).getLocation();
@@ -162,7 +176,7 @@ public class VideoSeqUtils {
    */
   public String getLocationOfVseq(VideoSeq vseq) {
     if (isAlternative(vseq)) {
-      return this.getAlternativeLocation(vseq);
+      return this.getRandomAlternativeLocation(vseq);
     } else if (this.isOptional(vseq)) {
       return this.getOptionalLocation(vseq);
     } else {
@@ -170,6 +184,48 @@ public class VideoSeqUtils {
     }
   }
 
+  /**
+   * 
+   * @param medias
+   * @return
+   */
+  public int getOptionalSize(EList<Media> medias) {
+	  int i = 0;
+	  for(Media media : medias) {
+		  if(this.isOptional(this.renderVseq(media))){
+			  i += 1;
+		  }
+	  }
+	  return i;
+  }
+  
+  /**
+   * 
+   * @param medias
+   * @return
+   */
+  public int getAlternativeSize(EList<Media> medias) {
+	  int i = 0;
+	  for(Media media : medias) {
+		  VideoSeq vseq = this.renderVseq(media);
+		  if(this.isAlternative(vseq)){
+			  EList<VideoDescription> videodesc = ((AlternativeVideoSeq) vseq).getVideodescs();
+			  i += videodesc.size();
+		  }
+	  }
+	  return i;
+  }
+  
+  /**
+   * 
+   * @param nbOfAlternatives
+   * @param nbOfOptionals
+   * @return
+   */
+  public int nbOfVariant(int nbOfAlternatives, int nbOfOptionals) {
+	  return nbOfAlternatives == 0 ? 1 + 2 * nbOfOptionals : nbOfAlternatives * (1 + nbOfOptionals); 
+  }
+  
   /**
    * 
    * @param vseq
