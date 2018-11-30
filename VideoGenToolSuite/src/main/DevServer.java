@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
@@ -49,18 +50,9 @@ public class DevServer {
   public String getMedias(Request req, Response res) throws InterruptedException, IOException{
 	  res.type(this.resDataType);
 	  this.ffmpeg = new FfmpegEngine();
-	  List<String> allMedias = this.ffmpeg.allMedias(medias);
-	  Map<String, String> data = new HashMap<>();
-	  int i = 0;
-	  for(String element : allMedias) {
-		  String vignette = this.ffmpeg.generateVignette(element, "v"+ i);
-		  i++;
-		  Path path = Paths.get(vignette);
-		  String imgBase64 = Base64.getEncoder().encodeToString(Files.readAllBytes(path));
-		  data.put(element, this.ffmpeg.generateVignette(element, imgBase64)); 
-	  }
-	  
-	return new Gson().toJson(data);
+	  List<Map<String, String>> data = this.ffmpeg.mediaInformation(medias);
+	  System.out.println(data.toString());
+	  return new Gson().toJson(data);
   }
   
   /**
