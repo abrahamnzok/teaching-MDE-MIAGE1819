@@ -20,17 +20,17 @@ import org.xtext.example.mydsl.videoGen.VideoSeq;
 
 public class VideoSeqUtils {
 
-	/**
-	 * 
-	 * @param vseq
-	 * @return
-	 */
+  /**
+   *
+   * @param vseq
+   * @return
+   */
   public boolean isMandatory(VideoSeq vseq) {
     return vseq instanceof MandatoryVideoSeq;
   }
 
   /**
-   * 
+   *
    * @param vseq
    * @return
    */
@@ -39,7 +39,7 @@ public class VideoSeqUtils {
   }
 
   /**
-   * 
+   *
    * @param vseq
    * @return
    */
@@ -48,7 +48,7 @@ public class VideoSeqUtils {
   }
 
   /**
-   * 
+   *
    * @param media
    * @return
    */
@@ -57,7 +57,7 @@ public class VideoSeqUtils {
   }
 
   /**
-   * 
+   *
    * @param media
    * @return
    */
@@ -65,8 +65,29 @@ public class VideoSeqUtils {
     return isVideoSeq(media) ? (VideoSeq) media : (VideoSeq) null;
   }
 
+
   /**
-   * 
+   *
+   * @param u
+   * @return
+   */
+  public int factorialOf(int u) {
+    return u == 1 || u == 0 ? 1 : u * factorialOf(u - 1);
+  }
+
+  /**
+   *
+   * @param n
+   * @param k
+   * @return
+   */
+  public int nOverK(int n, int k) {
+    return (int) factorialOf(n) / (factorialOf(k) * factorialOf(n - k));
+  }
+
+
+  /**
+   *
    * @param vseq
    * @return
    */
@@ -75,7 +96,7 @@ public class VideoSeqUtils {
   }
 
   /**
-   * 
+   *
    * @param vseq
    * @return
    */
@@ -84,7 +105,7 @@ public class VideoSeqUtils {
   }
 
   /**
-   * 
+   *
    * @param vseq
    * @return
    */
@@ -93,7 +114,7 @@ public class VideoSeqUtils {
   }
 
   /**
-   * 
+   *
    * @param vseq
    * @return
    */
@@ -103,7 +124,7 @@ public class VideoSeqUtils {
   }
 
   /**
-   * 
+   *
    * @param vseq
    * @param index
    * @return
@@ -114,7 +135,7 @@ public class VideoSeqUtils {
   }
 
   /**
-   * 
+   *
    * @param vseq
    * @return
    */
@@ -125,7 +146,7 @@ public class VideoSeqUtils {
   }
 
   /**
-   * 
+   *
    * @param vseq
    * @return
    */
@@ -135,7 +156,7 @@ public class VideoSeqUtils {
   }
 
   /**
-   * 
+   *
    * @param vseq
    * @return
    */
@@ -143,23 +164,23 @@ public class VideoSeqUtils {
     return new Random().nextBoolean() ? ((OptionalVideoSeq) vseq).getDescription().getLocation()
         : "";
   }
-  
+
   /**
-   * 
+   *
    * @param vseq
    * @return
    */
   public String getEachOptionalLocation(VideoSeq vseq) {
-	    return  ((OptionalVideoSeq) vseq).getDescription().getLocation();
+    return ((OptionalVideoSeq) vseq).getDescription().getLocation();
   }
-  
+
   public String getAlternativeLocation(VideoSeq vseq, int index) {
-	  EList<VideoDescription> videodesc = ((AlternativeVideoSeq) vseq).getVideodescs();
-	  return videodesc.get(index).getLocation();
+    EList<VideoDescription> videodesc = ((AlternativeVideoSeq) vseq).getVideodescs();
+    return videodesc.get(index).getLocation();
   }
 
   /**
-   * 
+   *
    * @param vseq
    * @return
    */
@@ -170,7 +191,7 @@ public class VideoSeqUtils {
   }
 
   /**
-   * 
+   *
    * @param vseq
    * @return
    */
@@ -184,50 +205,106 @@ public class VideoSeqUtils {
     }
   }
 
+
   /**
-   * 
+   *
    * @param medias
    * @return
    */
   public int getOptionalSize(EList<Media> medias) {
-	  int i = 0;
-	  for(Media media : medias) {
-		  if(this.isOptional(this.renderVseq(media))){
-			  i += 1;
-		  }
-	  }
-	  return i;
+    int i = 0;
+    for (Media media : medias) {
+      if (this.isOptional(this.renderVseq(media))) {
+        i += 1;
+      }
+    }
+    return i;
   }
-  
+
   /**
-   * 
+   *
    * @param medias
    * @return
    */
   public int getAlternativeSize(EList<Media> medias) {
-	  int i = 0;
-	  for(Media media : medias) {
-		  VideoSeq vseq = this.renderVseq(media);
-		  if(this.isAlternative(vseq)){
-			  EList<VideoDescription> videodesc = ((AlternativeVideoSeq) vseq).getVideodescs();
-			  i += videodesc.size();
-		  }
-	  }
-	  return i;
+    int i = 0;
+    for (Media media : medias) {
+      VideoSeq vseq = this.renderVseq(media);
+      if (this.isAlternative(vseq)) {
+        EList<VideoDescription> videodesc = ((AlternativeVideoSeq) vseq).getVideodescs();
+        i += videodesc.size();
+      }
+    }
+    return i > 0 ? i : 0;
   }
-  
+
   /**
-   * 
+   *
+   * @param medias
+   * @return
+   */
+  public int isMandatoryPresent(EList<Media> medias) {
+    boolean isTypePresent = false;
+    int collectionSize = medias.size();
+    int u = 0;
+    for (int i = 0; i < collectionSize; i++) {
+      VideoSeq vseq = this.renderVseq(medias.get(i));
+      isTypePresent = this.isMandatory(vseq);
+      u = isTypePresent ? 1 : 0;
+    }
+    return u;
+  }
+
+  /**
+   *
+   * @param medias
+   * @return
+   */
+  public int isOptionalPresent(EList<Media> medias) {
+    boolean isTypePresent = false;
+    int collectionSize = medias.size();
+    int u = 0;
+    for (int i = 0; i < collectionSize; i++) {
+      VideoSeq vseq = this.renderVseq(medias.get(i));
+      isTypePresent = this.isOptional(vseq);
+      u = isTypePresent ? 1 : 0;
+    }
+    return u;
+  }
+
+  /**
+   *
+   * @param medias
+   * @return
+   */
+  public int isAlternativePresent(EList<Media> medias) {
+    boolean isTypePresent = false;
+    int collectionSize = medias.size();
+    int u = 0;
+    for (int i = 0; i < collectionSize; i++) {
+      VideoSeq vseq = this.renderVseq(medias.get(i));
+      isTypePresent = this.isAlternative(vseq);
+      u = isTypePresent ? 1 : 0;
+    }
+    return u;
+  }
+
+
+  /**
+   *
    * @param nbOfAlternatives
    * @param nbOfOptionals
    * @return
    */
-  public int nbOfVariant(int nbOfAlternatives, int nbOfOptionals) {
-	  return nbOfAlternatives == 0 ? 1 + 2 * nbOfOptionals : nbOfAlternatives * (1 + nbOfOptionals); 
+  public int nOfvariants(EList<Media> medias) {
+    int nm = this.getAlternativeSize(medias) + this.getOptionalSize(medias) + 1;
+    int kt = this.isAlternativePresent(medias) + this.isOptionalPresent(medias) + this
+        .isMandatoryPresent(medias);
+    return 1 + this.nOverK(nm, kt);
   }
-  
+
   /**
-   * 
+   *
    * @param vseq
    * @return
    */
@@ -243,7 +320,7 @@ public class VideoSeqUtils {
 
 
   /**
-   * 
+   *
    * @param medias
    * @return
    */
@@ -268,7 +345,7 @@ public class VideoSeqUtils {
   }
 
   /**
-   * 
+   *
    * @param basePath
    * @param variants
    * @return

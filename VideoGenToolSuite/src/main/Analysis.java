@@ -63,10 +63,7 @@ public class Analysis {
     List<Map> metadata = new ArrayList<>();
     List<String> variant = new ArrayList<>();
     List<List<String>> collector = new ArrayList<>();
-    List<String> tempclone;
-    int nbOfVariants = this.utils
-        .nbOfVariant(this.utils.getAlternativeSize(medias), this.utils.getOptionalSize(medias));
-    int u = 0;
+    int nbOfVariants = this.utils.nOfvariants(medias);
     for (int i = 0; i < nbOfVariants; i++) {
       collector.add(variant);
       variant = this.engine.generateVariant(medias);
