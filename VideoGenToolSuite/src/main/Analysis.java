@@ -1,5 +1,6 @@
 package main;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -13,7 +14,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
+import org.apache.commons.io.FileUtils;
 import org.eclipse.emf.common.util.EList;
+import org.json.CDL;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.xtext.example.mydsl.videoGen.Media;
 
 import com.google.gson.Gson;
@@ -58,8 +63,9 @@ public class Analysis {
    * @param medias
    * @param allMedias
    * @return
+ * @throws IOException 
    */
-  public String getVariantsSize(EList<Media> medias, List<String> allMedias) {
+  public String getVariantsSize(EList<Media> medias, List<String> allMedias) throws IOException {
     List<Map> metadata = new ArrayList<>();
     List<String> variant = new ArrayList<>();
     List<List<String>> collector = new ArrayList<>();
@@ -68,7 +74,7 @@ public class Analysis {
       collector.add(variant);
       variant = this.engine.generateVariant(medias);
       boolean collectorSaysTrue = collector.contains(variant);
-      while (collectorSaysTrue) {
+      if (collectorSaysTrue) {
         variant = this.engine.generateVariant(medias);
         collectorSaysTrue = collector.contains(variant);
       }
@@ -80,6 +86,11 @@ public class Analysis {
       data.put("size", this.utils.getVariantSize(this.basePath, variant));
       metadata.add(data);
     }
+    String data = new Gson().toJson(metadata);
+    JSONArray docs = new JSONArray(data);
+    File file=new File(this.basePath + "variants.csv");
+    String csv = CDL.toString(docs);
+    FileUtils.writeStringToFile(file, csv);
     return new Gson().toJson(metadata);
   }
 

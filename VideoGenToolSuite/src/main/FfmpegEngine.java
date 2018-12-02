@@ -53,42 +53,51 @@ public class FfmpegEngine {
       VideoSeq vseq = this.utils.renderVseq(media);
       if (this.utils.isMandatory(vseq)) {
         information = new HashMap<String, String>();
-        vignette = this.generateVignette(this.utils.getMandatoryLocation(vseq),
-            this.utils.getMandatoryId(vseq));
+        String medianame = this.utils.getMandatoryId(vseq);
+        String location = this.utils.getMandatoryLocation(vseq);
+        vignette = this.generateVignette(location,
+            medianame);
         path = Paths.get(vignette);
         imgBase64 = Base64.getEncoder().encodeToString(Files.readAllBytes(path));
-        information.put("type", "mandatory");
-        information.put("location", this.utils.getMandatoryLocation(vseq));
-        information.put("image", imgBase64);
+        information.put("medianame", medianame);
+        information.put("mediatype", "mandatory");
+        information.put("mediasrc", location);
+        information.put("src", "data:image/jpeg;base64," + imgBase64);
         mediaSetInformation.add(information);
       } else if (this.utils.isOptional(vseq)) {
         information = new HashMap<String, String>();
+        String medianame = this.utils.getOptionalId(vseq);
+        String location = this.utils.getEachOptionalLocation(vseq);
+        vignette = this.generateVignette(location,
+            medianame);
         vignette = this
-            .generateVignette(this.utils.getEachOptionalLocation(vseq), this.utils.getOptionalId(vseq));
+            .generateVignette(location, medianame);
         path = Paths.get(vignette);
         imgBase64 = Base64.getEncoder().encodeToString(Files.readAllBytes(path));
-        information.put("type", "optional");
-        information.put("location", this.utils.getEachOptionalLocation(vseq));
-        information.put("image", imgBase64);
+        information.put("medianame", medianame);
+        information.put("mediatype", "optional");
+        information.put("mediasrc", location);
+        information.put("src", "data:image/jpeg;base64, " + imgBase64);
         mediaSetInformation.add(information);
-      } else {
-    	  information = new HashMap<>();
+      } else if (this.utils.isAlternative(vseq)) {
           for (int index = 0; index < this.utils.getAlternativeSize(vseq); index++) {
-        	  String alternativeId = this.utils.getAlternativeId(vseq, index);
+        	  information = new HashMap<>();
+        	  String medianame = this.utils.getAlternativeId(vseq, index);
         	  String alternativeLocation = this.utils.getAlternativeLocation(vseq, index);
-              vignette = this.generateVignette(alternativeLocation, alternativeId);
-              System.out.println(vignette);
+              vignette = this.generateVignette(alternativeLocation, medianame);
               path = Paths.get(vignette);
               imgBase64 = Base64.getEncoder().encodeToString(Files.readAllBytes(path));
-              information.put("type", "alternative");
-              information.put("location", alternativeLocation);
-              information.put("image", imgBase64);
+              information.put("medianame", medianame);
+              information.put("mediatype", "alternative");
+              information.put("mediasrc", alternativeLocation);
+              information.put("src", "data:image/jpeg;base64, " + imgBase64);
               mediaSetInformation.add(information);
           }
         }
     }
     return mediaSetInformation;
   }
+  
 
   /**
    *
@@ -187,7 +196,6 @@ public class FfmpegEngine {
         + " -vf scale=300x200 -r 1 -t 00:00:01 -ss 00:00:02  -f image2 "
         + this.vignetteLocation + output + ".jpg";
     this.execute(command);
-    System.out.println(command);
     return this.vignetteLocation + output + ".jpg";
   }
 
@@ -241,7 +249,6 @@ public class FfmpegEngine {
     try {
       Process proc = Runtime.getRuntime().exec(command);
       int exitValue = proc.waitFor();
-      System.out.println("exit value: " + exitValue);
     } catch (Throwable t) {
       t.printStackTrace();
     }

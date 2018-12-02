@@ -3,15 +3,16 @@ package main;
 import static spark.Spark.*;
 
 public class Main {
+    
 
   public static void main(String[] args) {
-	port(8080);
+    port(8080);
 
     DevServer server = new DevServer();
     
     SparkConfig.apply();
-       
-    path("/allmedias/", () -> {
+    
+    path("/allmedias", () -> {
       get("", (req, res) -> {
         return server.getMedias(req, res);
       });

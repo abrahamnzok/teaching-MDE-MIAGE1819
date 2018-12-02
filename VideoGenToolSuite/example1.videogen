@@ -1,12 +1,13 @@
 @author "MIAGE 2 students"
 VideoGen {
-	mandatory videoseq v1 "/Users/Abraham/Desktop/Pexels/v1.mkv"
-	optional videoseq v2 "/Users/Abraham/Desktop/Pexels/v2.mkv"
-	alternatives v3 {
-		videoseq v31 "/Users/Abraham/Desktop/Pexels/v31.mkv"
-		videoseq v32 "/Users/Abraham/Desktop/Pexels/v32.mkv"
-		
+	mandatory videoseq v11 "/Users/Abraham/Desktop/Pexels/v11.mkv"
+	mandatory videoseq v22 "/Users/Abraham/Desktop/Pexels/v22.mkv"
+	optional  videoseq v21 "/Users/Abraham/Desktop/Pexels/v21.mkv"
+	optional videoseq v4 "/Users/Abraham/Desktop/Pexels/v4.mkv"
+	alternatives v3{
+			videoseq v31 "/Users/Abraham/Desktop/Pexels/v31.mkv"
+			videoseq v32 "/Users/Abraham/Desktop/Pexels/v32.mkv"	
+			videoseq v33 "/Users/Abraham/Desktop/Pexels/v33.mkv"
 	}
-
-	
+	mandatory videoseq v4 "/Users/Abraham/Desktop/Pexels/v4.mkv"
 }

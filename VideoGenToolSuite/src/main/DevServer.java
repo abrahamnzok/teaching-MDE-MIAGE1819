@@ -40,61 +40,56 @@ public class DevServer {
   private String resPngType = "image/png";
 
   /**
-   * 
+   *
    * @param req
    * @param res
    * @return
    * @throws InterruptedException
    * @throws IOException
    */
-  public String getMedias(Request req, Response res) throws InterruptedException, IOException{
-	  res.type(this.resDataType);
-	  this.ffmpeg = new FfmpegEngine();
-	  List<Map<String, String>> data = this.ffmpeg.mediaInformation(medias);
-	  System.out.println(data.toString());
-	  return new Gson().toJson(data);
+  public String getMedias(Request req, Response res) throws InterruptedException, IOException {
+    res.type(this.resDataType);
+    this.ffmpeg = new FfmpegEngine();
+    List<Map<String, String>> data = this.ffmpeg.mediaInformation(medias);
+    return new Gson().toJson(data);
   }
-  
+
   /**
-   * 
+   *
    * @param req
    * @param res
    * @return
    * @throws IOException
    * @throws InterruptedException
    */
-  public Integer generate(Request req, Response res)
+  public String generate(Request req, Response res)
       throws IOException, InterruptedException {
     boolean autogenerate = Boolean.parseBoolean(req.queryParams("autogen"));
     String userPlaylist = req.body();
-	this.ffmpeg = new FfmpegEngine();
+    this.ffmpeg = new FfmpegEngine();
     List<String> playlist =
-        autogenerate ? this.ffmpeg.playListFiles(medias) : this.ffmpeg.playListFiles(userPlaylist);
-    System.out.println(playlist);    
+        autogenerate ? this.ffmpeg.playListFiles(medias)
+            : userPlaylist.isEmpty() ? this.ffmpeg.playListFiles(medias) : 
+            	this.ffmpeg.playListFiles(userPlaylist);
     String playlistFile = this.ffmpeg.createFfmpegPlaylist(playlist);
     this.ffmpeg.writeToFile(playlistFile);
     String filename = req.queryParams("filename");
     this.ffmpeg.generateVideo(filename);
-    Path file = Paths.get(this.ffmpeg.getOutputLocation());
-    byte[] video = Files.readAllBytes(file);
     res.status(200);
-    HttpServletResponse resp = res.raw();
-    resp.setContentType("video/mkv");
-    resp.getOutputStream().write(video);
-    resp.getOutputStream().close();
-    return 200;
+    res.type(resDataType);
+    return this.ffmpeg.getOutputLocation();
   }
 
-  
+
   /**
-   * 
+   *
    * @param req
    * @param res
    * @return
    * @throws InterruptedException
    * @throws IOException
    */
-  public Integer getGif(Request req, Response res) throws InterruptedException, IOException {
+  public int getGif(Request req, Response res) throws InterruptedException, IOException {
     res.type(this.resImageType);
     String gifName = req.queryParams("gifname");
     boolean generate = this.ffmpeg.generateGif(gifName);
@@ -113,7 +108,7 @@ public class DevServer {
   }
 
   /**
-   * 
+   *
    * @param req
    * @param res
    * @return
@@ -121,20 +116,21 @@ public class DevServer {
    * @throws ParseException
    */
   public String getVariantDuration(Request req, Response res) throws IOException, ParseException {
-	  this.analysis = new Analysis();
+    this.analysis = new Analysis();
     res.type(this.resDataType);
     return new Gson().toJson(this.analysis.getDuration(this.ffmpeg.getOutputLocation()));
 
   }
 
   /**
-   * 
+   *
    * @param req
    * @param res
    * @return
+ * @throws IOException 
    */
-  public String getPossibleVariansAndSize(Request req, Response res) {
-	  this.analysis = new Analysis();
+  public String getPossibleVariansAndSize(Request req, Response res) throws IOException {
+    this.analysis = new Analysis();
     res.type(this.resDataType);
     return this.analysis.getVariantsSize(this.medias, this.utils.getMediaIds(medias));
   }
