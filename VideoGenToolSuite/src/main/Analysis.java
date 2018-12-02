@@ -26,7 +26,7 @@ import com.google.gson.Gson;
 
 public class Analysis {
 
-  private String basePath = "/Users/Abraham/Desktop/Pexels/";
+  private String basePath = System.getProperty("user.dir") + "/Pexels/";
   private String command = "/usr/local/bin/ffprobe -v quiet -of csv=p=0 -show_entries format=duration ";
   private String duration = "";
   private VideoSeqUtils utils = new VideoSeqUtils();

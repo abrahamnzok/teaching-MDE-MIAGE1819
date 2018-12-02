@@ -26,14 +26,14 @@ public class FfmpegEngine {
 
   private List<String> playlist = new ArrayList<>();
   private String ffmpegFile = "";
-  private String playlistPath = "/Users/Abraham/Desktop/Pexels/playlist.txt";
-  private String outputBasePath = "/Users/Abraham/Desktop/Pexels/";
+  private String outputBasePath = System.getProperty("user.dir") + "/Pexels/";
   private String compilationLocation = this.outputBasePath;
-  private String basePath = "/Users/Abraham/Desktop/Pexels/";
+  private String playlistPath = this.outputBasePath + "playlist.txt";
+  private String basePath = this.outputBasePath;
   private VideoSeqUtils utils = new VideoSeqUtils();
-  private String gifLocation = "/Users/Abraham/Desktop/Pexels/";
-  private String paletteLocation = "/Users/Abraham/Desktop/Pexels/";
-  private String vignetteLocation = "/Users/Abraham/Desktop/Pexels/";
+  private String gifLocation = this.outputBasePath;
+  private String paletteLocation = this.outputBasePath;
+  private String vignetteLocation = this.outputBasePath;
 
   /**
    * 

@@ -9,7 +9,7 @@ public class Main {
     port(8080);
 
     DevServer server = new DevServer();
-    
+    System.out.println("All files will be put here: " + System.getProperty("user.dir") + "/Pexels/");
     SparkConfig.apply();
     
     path("/allmedias", () -> {
