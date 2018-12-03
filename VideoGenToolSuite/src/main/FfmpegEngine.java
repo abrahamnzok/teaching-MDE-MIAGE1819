@@ -37,8 +37,8 @@ public class FfmpegEngine {
 
   /**
    * 
-   * @param medias
-   * @return
+   * @param medias in a Videogen file
+   * @return {List} of map containing information about each media
    * @throws IOException
    * @throws InterruptedException
    */
@@ -101,8 +101,8 @@ public class FfmpegEngine {
 
   /**
    *
-   * @param medias
-   * @return
+   * @param medias in a Videogen file
+   * @return {List} with the files which will be compiled by ffmpeg
    */
   public List<String> playListFiles(EList<Media> medias) {
     medias.forEach(media -> {
@@ -114,8 +114,8 @@ public class FfmpegEngine {
 
   /**
    *
-   * @param userPlaylist
-   * @return
+   * @param {String} userPlaylist 
+   * @return {List} with the files chosen by a user
    */
   public List<String> playListFiles(String userPlaylist) {
     return new Gson().fromJson(userPlaylist, List.class);
@@ -123,8 +123,8 @@ public class FfmpegEngine {
 
   /**
    *
-   * @param playlist
-   * @return
+   * @param {List} playlist containing different video sequence path
+   * @return {String} a single unit which store information for ffmpeg
    */
   public String createFfmpegPlaylist(List<String> playlist) {
     playlist.forEach(element -> this.ffmpegFile += "file '" + element + "' \n");
@@ -133,7 +133,7 @@ public class FfmpegEngine {
 
   /**
    *
-   * @param playlist
+   * @param {String} playlist to write to a file
    * @throws IOException
    */
   public void writeToFile(String playlist)
@@ -146,7 +146,8 @@ public class FfmpegEngine {
 
   /**
    *
-   * @param filename
+   * @param {String} filename given to the compiled video
+   * This methods generates a video sequence from the given ffmpeg playlist
    * @throws InterruptedException
    */
   public void generateVideo(String filename) throws InterruptedException {
@@ -159,8 +160,8 @@ public class FfmpegEngine {
 
   /**
    *
-   * @param name
-   * @return
+   * @param {String} name given to the generated gif
+   * @return {Boolean} true if there is a compiled video, false otherwise
    * @throws InterruptedException
    */
   public boolean generateGif(String name) throws InterruptedException {
@@ -186,8 +187,8 @@ public class FfmpegEngine {
 
   /**
    *
-   * @param input
-   * @param output
+   * @param {String} input location of a media
+   * @param {String} output location of the vignette
    * @return
    * @throws InterruptedException
    */
@@ -201,7 +202,7 @@ public class FfmpegEngine {
 
   /**
    *
-   * @return
+   * @return {String} location of the gif
    */
   public String getGifLocation() {
     return this.gifLocation;
@@ -209,7 +210,7 @@ public class FfmpegEngine {
 
   /**
    *
-   * @return
+   * @return {String} location of the compiled video
    */
   public String getOutputLocation() {
     return this.compilationLocation;
@@ -218,7 +219,7 @@ public class FfmpegEngine {
 
   /**
    *
-   * @param medias
+   * @param medias in a Videogen file
    * @return
    */
   public List<String> generateVariant(EList<Media> medias) {
@@ -233,7 +234,7 @@ public class FfmpegEngine {
 
   /**
    *
-   * @return
+   * @return {String} the output location of all the project files
    */
   public String getOutputPath() {
     return this.outputBasePath;
@@ -241,11 +242,10 @@ public class FfmpegEngine {
 
   /**
    *
-   * @param command
+   * @param {String} command to be executed
    * @throws InterruptedException
    */
   public void execute(String command) throws InterruptedException {
-    //System.out.println(command);
     try {
       Process proc = Runtime.getRuntime().exec(command);
       int exitValue = proc.waitFor();

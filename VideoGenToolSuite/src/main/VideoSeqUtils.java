@@ -22,8 +22,8 @@ public class VideoSeqUtils {
 
   /**
    *
-   * @param vseq
-   * @return
+   * @param {VideoSeq} vseq to process
+   * @return {Boolean} true if vseq is an instance of {MandatoryVideoSeq}
    */
   public boolean isMandatory(VideoSeq vseq) {
     return vseq instanceof MandatoryVideoSeq;
@@ -31,8 +31,8 @@ public class VideoSeqUtils {
 
   /**
    *
-   * @param vseq
-   * @return
+   * @param {VideoSeq} vseq to process
+   * @return {Boolean} true if vseq is an instance of {AlternativeVideoSeq}
    */
   public boolean isAlternative(VideoSeq vseq) {
     return vseq instanceof AlternativeVideoSeq;
@@ -40,8 +40,8 @@ public class VideoSeqUtils {
 
   /**
    *
-   * @param vseq
-   * @return
+   * @param {VideoSeq} vseq to process
+   * @return {Boolean} true if vseq is an instance of {OptionalVideoSeq}
    */
   public boolean isOptional(VideoSeq vseq) {
     return vseq instanceof OptionalVideoSeq;
@@ -49,8 +49,8 @@ public class VideoSeqUtils {
 
   /**
    *
-   * @param media
-   * @return
+   * @param {Media} media to process
+   * @return {Boolean} true if media is an not an instance of {Image}, false otherwise
    */
   public boolean isVideoSeq(Media media) {
     return media instanceof Image ? false : true;
@@ -58,8 +58,8 @@ public class VideoSeqUtils {
 
   /**
    *
-   * @param media
-   * @return
+   * @param {Media} media to process
+   * @return {VideoSeq} a videoseq Object
    */
   public VideoSeq renderVseq(Media media) {
     return isVideoSeq(media) ? (VideoSeq) media : (VideoSeq) null;
@@ -68,8 +68,8 @@ public class VideoSeqUtils {
 
   /**
    *
-   * @param u
-   * @return
+   * @param {Integer} u
+   * @return {Integer} the factorial of a number
    */
   public int factorialOf(int u) {
     return u == 1 || u == 0 ? 1 : u * factorialOf(u - 1);
@@ -77,9 +77,9 @@ public class VideoSeqUtils {
 
   /**
    *
-   * @param n
-   * @param k
-   * @return
+   * @param {Integer} n collection size
+   * @param {Integer} k number of elements selected
+   * @return {Integer} result from the combination formula
    */
   public int nOverK(int n, int k) {
     return (int) factorialOf(n) / (factorialOf(k) * factorialOf(n - k));
@@ -88,8 +88,8 @@ public class VideoSeqUtils {
 
   /**
    *
-   * @param vseq
-   * @return
+   * @param {VideoSeq} vseq to process
+   * @return {String} path to a {MandatoryVideoSeq}
    */
   public String getMandatoryLocation(VideoSeq vseq) {
     return ((MandatoryVideoSeq) vseq).getDescription().getLocation();
@@ -97,8 +97,8 @@ public class VideoSeqUtils {
 
   /**
    *
-   * @param vseq
-   * @return
+   * @param {VideoSeq} vseq to process
+   * @return {String} id of a {MandatoryVideoSeq}
    */
   public String getMandatoryId(VideoSeq vseq) {
     return ((MandatoryVideoSeq) vseq).getDescription().getVideoid();
@@ -106,8 +106,8 @@ public class VideoSeqUtils {
 
   /**
    *
-   * @param vseq
-   * @return
+   * @param {VideoSeq} vseq to process
+   * @return {String} id of a {OptionalVideoSeq}
    */
   public String getOptionalId(VideoSeq vseq) {
     return ((OptionalVideoSeq) vseq).getDescription().getVideoid();
@@ -115,8 +115,8 @@ public class VideoSeqUtils {
 
   /**
    *
-   * @param vseq
-   * @return
+   * @param {VideoSeq} vseq to process
+   * @return {String} random id of a {OptionalVideoSeq}
    */
   public String getRandomOptionalId(VideoSeq vseq) {
     return new Random().nextBoolean() ? ((OptionalVideoSeq) vseq).getDescription().getVideoid()
@@ -125,9 +125,9 @@ public class VideoSeqUtils {
 
   /**
    *
-   * @param vseq
-   * @param index
-   * @return
+   * @param {VideoSeq} vseq to process
+   * @param {Integer} index position of an element 
+   * @return {String} id of a {AlternativeVideoSeq}
    */
   public String getAlternativeId(VideoSeq vseq, int index) {
     EList<VideoDescription> videodesc = ((AlternativeVideoSeq) vseq).getVideodescs();
@@ -136,8 +136,8 @@ public class VideoSeqUtils {
 
   /**
    *
-   * @param vseq
-   * @return
+   * @param {VideoSeq} vseq to process
+   * @return {String} Random id of a {AlternativeVideoSeq}
    */
   public String getRandomAlternativeId(VideoSeq vseq) {
     EList<VideoDescription> videodesc = ((AlternativeVideoSeq) vseq).getVideodescs();
@@ -147,8 +147,8 @@ public class VideoSeqUtils {
 
   /**
    *
-   * @param vseq
-   * @return
+   * @param {VideoSeq} vseq to process
+   * @return {Integer} Size of an {AlternativeVideoSeq}
    */
   public int getAlternativeSize(VideoSeq vseq) {
     EList<VideoDescription> videodesc = ((AlternativeVideoSeq) vseq).getVideodescs();
@@ -157,8 +157,8 @@ public class VideoSeqUtils {
 
   /**
    *
-   * @param vseq
-   * @return
+   * @param {VideoSeq} vseq to process
+   * @return {String} path to a random {OptionalVideoSeq}
    */
   public String getOptionalLocation(VideoSeq vseq) {
     return new Random().nextBoolean() ? ((OptionalVideoSeq) vseq).getDescription().getLocation()
@@ -167,8 +167,8 @@ public class VideoSeqUtils {
 
   /**
    *
-   * @param vseq
-   * @return
+   * @param {VideoSeq} vseq to process
+   * @return {String} path to an {OptionalVideoSeq}
    */
   public String getEachOptionalLocation(VideoSeq vseq) {
     return ((OptionalVideoSeq) vseq).getDescription().getLocation();
@@ -181,8 +181,8 @@ public class VideoSeqUtils {
 
   /**
    *
-   * @param vseq
-   * @return
+   * @param {VideoSeq} vseq to process
+   * @return {String} path to a random {AlternativeVideoSeq}
    */
   public String getRandomAlternativeLocation(VideoSeq vseq) {
     EList<VideoDescription> videodesc = ((AlternativeVideoSeq) vseq).getVideodescs();
@@ -192,8 +192,8 @@ public class VideoSeqUtils {
 
   /**
    *
-   * @param vseq
-   * @return
+   * @param {VideoSeq} vseq to process
+   * @return {String} path to a {VideoSeq}
    */
   public String getLocationOfVseq(VideoSeq vseq) {
     if (isAlternative(vseq)) {
@@ -208,8 +208,8 @@ public class VideoSeqUtils {
 
   /**
    *
-   * @param medias
-   * @return
+   * @param {EList} medias in a Videogen file
+   * @return {Integer} number of {OptionalVideoSeq} in a file
    */
   public int getOptionalSize(EList<Media> medias) {
     int i = 0;
@@ -223,8 +223,8 @@ public class VideoSeqUtils {
 
   /**
    *
-   * @param medias
-   * @return
+   * @param {EList} medias in a Videogen file
+   * @return {Integer} number of {AlternativeVideoSeq} in a file
    */
   public int getAlternativeSize(EList<Media> medias) {
     int i = 0;
@@ -240,73 +240,80 @@ public class VideoSeqUtils {
 
   /**
    *
-   * @param medias
-   * @return
+   * @param {EList} medias in a Videogen file
+   * @return {Integer} 1 if {MandatoryVideoSeq} is present, 0 otherwise
    */
   public int isMandatoryPresent(EList<Media> medias) {
     boolean isTypePresent = false;
     int collectionSize = medias.size();
     int u = 0;
-    for (int i = 0; i < collectionSize; i++) {
-      VideoSeq vseq = this.renderVseq(medias.get(i));
+    int o = 0;
+    while (o < collectionSize && !isTypePresent) {
+      VideoSeq vseq = this.renderVseq(medias.get(o));
       isTypePresent = this.isMandatory(vseq);
+      isTypePresent = this.isOptional(vseq);
       u = isTypePresent ? 1 : 0;
+      o += 1;
     }
     return u;
   }
 
   /**
    *
-   * @param medias
-   * @return
+   * @param {EList} medias in a Videogen file
+   * @return {Integer} 1 if {OptionalVideoSeq} is present, 0 otherwise
    */
   public int isOptionalPresent(EList<Media> medias) {
     boolean isTypePresent = false;
     int collectionSize = medias.size();
     int u = 0;
-    for (int i = 0; i < collectionSize; i++) {
-      VideoSeq vseq = this.renderVseq(medias.get(i));
-      isTypePresent = this.isOptional(vseq);
-      u = isTypePresent ? 1 : 0;
-    }
+    int o = 0;
+    while (o < collectionSize && !isTypePresent) {
+        VideoSeq vseq = this.renderVseq(medias.get(o));
+        isTypePresent = this.isOptional(vseq);
+        isTypePresent = this.isOptional(vseq);
+        u = isTypePresent ? 1 : 0;
+        o += 1;
+      }
     return u;
   }
 
   /**
    *
-   * @param medias
-   * @return
+   * @param {EList} medias in a Videogen file
+   * @return {Integer} 1 if {AlternativeVideoSeq} is present, 0 otherwise
    */
   public int isAlternativePresent(EList<Media> medias) {
     boolean isTypePresent = false;
     int collectionSize = medias.size();
     int u = 0;
-    for (int i = 0; i < collectionSize; i++) {
-      VideoSeq vseq = this.renderVseq(medias.get(i));
-      isTypePresent = this.isAlternative(vseq);
-      u = isTypePresent ? 1 : 0;
-    }
+    int o = 0;
+    while (o < collectionSize && !isTypePresent) {
+        VideoSeq vseq = this.renderVseq(medias.get(o));
+        isTypePresent = this.isAlternative(vseq);
+        isTypePresent = this.isAlternative(vseq);
+        u = isTypePresent ? 1 : 0;
+        o += 1;
+      }
     return u;
   }
 
 
   /**
-   *
-   * @param nbOfAlternatives
-   * @param nbOfOptionals
-   * @return
+   * 
+   * @param {EList} medias in a Videogen file
+   * @return {String} the number of possible variants
    */
   public int nOfvariants(EList<Media> medias) {
     int nm = this.getAlternativeSize(medias) + this.getOptionalSize(medias) + 1;
-    int kt = this.isAlternativePresent(medias) + this.isOptionalPresent(medias) + this
-        .isMandatoryPresent(medias);
+    int kt = this.isAlternativePresent(medias) + this.isOptionalPresent(medias);
     return 1 + this.nOverK(nm, kt);
   }
 
   /**
    *
-   * @param vseq
-   * @return
+   * @param {VideoSeq} vseq to process
+   * @return {String} identifier of a {VideoSeq}
    */
   public String getIdOfVseq(VideoSeq vseq) {
     if (isAlternative(vseq)) {
@@ -321,8 +328,8 @@ public class VideoSeqUtils {
 
   /**
    *
-   * @param medias
-   * @return
+   * @param {EList} medias in a Videogen file
+   * @return {List} collection of all {Media} Ids
    */
   public List<String> getMediaIds(EList<Media> medias) {
     List<String> mediaIds = new ArrayList<>();
@@ -346,8 +353,8 @@ public class VideoSeqUtils {
 
   /**
    *
-   * @param basePath
-   * @param variants
+   * @param {String} basePath working directory
+   * @param {List} variants is combination of different {Media} files
    * @return
    */
   public String getVariantSize(String basePath, List<String> variants) {

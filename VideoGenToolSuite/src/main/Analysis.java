@@ -34,8 +34,8 @@ public class Analysis {
 
   /**
    *
-   * @param uri
-   * @return
+   * @param uri Path to compilation 
+   * @return {String} the duration of the compiled variant
    * @throws IOException
    * @throws ParseException
    */
@@ -60,9 +60,9 @@ public class Analysis {
 
   /**
    *
-   * @param medias
-   * @param allMedias
-   * @return
+   * @param medias in a Videogen file
+   * @param allMedias {List} containing all the medias Ids
+   * @return {String} data about each variants combination and their sizes
  * @throws IOException 
    */
   public String getVariantsSize(EList<Media> medias, List<String> allMedias) throws IOException {

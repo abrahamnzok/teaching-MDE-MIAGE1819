@@ -56,8 +56,8 @@ public class DevServer {
 
   /**
    *
-   * @param req
-   * @param res
+   * @param {Request} req
+   * @param {Response} res
    * @return
    * @throws IOException
    * @throws InterruptedException
@@ -83,8 +83,8 @@ public class DevServer {
 
   /**
    *
-   * @param req
-   * @param res
+   * @param {Request} req
+   * @param {Response} res
    * @return
    * @throws InterruptedException
    * @throws IOException
@@ -109,8 +109,8 @@ public class DevServer {
 
   /**
    *
-   * @param req
-   * @param res
+   * @param {Request} req
+   * @param {Response} res
    * @return
    * @throws IOException
    * @throws ParseException
@@ -124,8 +124,8 @@ public class DevServer {
 
   /**
    *
-   * @param req
-   * @param res
+   * @param {Request} req
+   * @param {Response} res
    * @return
  * @throws IOException 
    */
