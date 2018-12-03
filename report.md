@@ -2,14 +2,15 @@
 
 ### JAVA SERVER
 
-1. The server run on `localhost:80808/`, all the files will be server in the current working directory and the program will produce a reporsitory of its own. 
+1. The server run on `localhost:80808/`, all the files will be server in the current working directory and the program will produce files in the `Pexels` reporsitory. 
 
 2. The current example1.videogen file can be replaced with any valid videogen file, but the filename has to be the same. The program will still work accordingly.
 
 3. All media (.mkv format) files will have to be stored in the created directory.
-4. The program uses ffmpeg, I was on unix based system (macos) and the path to ffmpeg is `/usr/local/bin/ffmpeg`
+
+4. The program uses ffmpeg, my local environement uses a unix based system and the path to ffmpeg is `/usr/local/bin/ffmpeg`
  
- Path to directory : `$dir/teaching-MDE-MIAGE1819/`
+ Path to output directory : `$dir/VideoGenToolSuite/Pexels/`
  
 
 #### API ROUTES
@@ -42,6 +43,6 @@ Here are some of them:
 
 I will improve my work in the future.
 
-![Alt Image Text](teaching-MDE-MIAGE1819/VideoGenToolSuite/Pexels/videogen.png)
+![Alt Image Text](VideoGenToolSuite/Pexels/videogen.png)
 
 
