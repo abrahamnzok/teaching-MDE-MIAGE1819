@@ -31,7 +31,7 @@ Step 1: Clone repo on local environment and in a terminal locate the project and
 Step 2: start the `Java Server`
 Step 3: Start the `Front End` like so `npm start`
 
-The front end will be server on `localhost:3223`
+The front end will be servered on `localhost:3223`
 
 Due to limited time, the features i wanted to include on the front side weren't implemented.
 
