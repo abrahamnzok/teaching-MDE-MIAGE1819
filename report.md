@@ -2,7 +2,7 @@
 
 ### JAVA SERVER
 
-1. The server run on `localhost:80808/`, all the files will be server in the current working directory and the program will produce files in the `Pexels` reporsitory. 
+1. The server runs on `localhost:80808/`, all the files will be servered in the current working directory and the program will produce files in the `Pexels` reporsitory. 
 
 2. The current example1.videogen file can be replaced with any valid videogen file, but the filename has to be the same. The program will still work accordingly.
 
